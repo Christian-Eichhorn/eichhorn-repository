@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Eichhorn Repository</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 2px solid #333;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #888;
+            font-size: 1.1rem;
+        }
+        
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px;
+            background: #1a1a1a;
+            border-radius: 8px;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            background: #333;
+            color: #e0e0e0;
+            border: 2px solid #444;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .filter-btn:hover {
+            background: #444;
+        }
+        
+        .filter-btn.active {
+            background: #555;
+            border-color: #777;
+            color: #fff;
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #1a1a1a;
+            margin-top: 20px;
+        }
+        
+        th {
+            background: #222;
+            color: #fff;
+            padding: 12px 10px;
+            text-align: center;
+            font-weight: 600;
+            border-bottom: 2px solid #444;
+            position: sticky;
+            top: 0;
+            cursor: pointer;
+            user-select: none;
+            font-size: 0.85rem;
+        }
+        
+        th:hover {
+            background: #2a2a2a;
+        }
+        
+        th.sortable::after {
+            content: ' ⇅';
+            opacity: 0.3;
+        }
+        
+        th.sorted-asc::after {
+            content: ' ↑';
+            opacity: 1;
+        }
+        
+        th.sorted-desc::after {
+            content: ' ↓';
+            opacity: 1;
+        }
+        
+        th:first-child,
+        th:nth-child(2) {
+            text-align: left;
+            padding-left: 15px;
+        }
+        
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #2a2a2a;
+            text-align: center;
+        }
+        
+        td:first-child,
+        td:nth-child(2) {
+            text-align: left;
+            padding-left: 15px;
+        }
+        
+        tr:hover {
+            background: #252525;
+        }
+        
+        tr.hidden {
+            display: none;
+        }
+        
+        .title {
+            font-weight: 500;
+            color: #fff;
+            min-width: 200px;
+        }
+        
+        .system {
+            color: #888;
+            font-size: 0.9rem;
+            min-width: 100px;
+        }
+        
+        .shop-link {
+            display: inline-block;
+            padding: 4px 10px;
+            background: #333;
+            color: #e0e0e0;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            transition: background 0.2s;
+        }
+        
+        .shop-link:hover {
+            background: #444;
+        }
+        
+        .empty-cell {
+            color: #444;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px 0 20px;
+            color: #666;
+            border-top: 1px solid #333;
+            margin-top: 40px;
+        }
+        
+        footer a {
+            color: #888;
+            text-decoration: none;
+        }
+        
+        footer a:hover {
+            color: #aaa;
+        }
+        
+        .count {
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>The Eichhorn Repository</h1>
+            <p class="subtitle">A collection of RPG zines and supplements by Christian Eichhorn</p>
+        </header>
+        
+        <div class="controls">
+            <button class="filter-btn active" data-system="all">All Systems</button>
+            <button class="filter-btn" data-system="MB">Mörk Borg</button>
+            <button class="filter-btn" data-system="CB">CY_BORG</button>
+            <button class="filter-btn" data-system="DS">Death In Space</button>
+            <button class="filter-btn" data-system="¶">Pilcrow</button>
+            <button class="filter-btn" data-system="multi">Multi-System</button>
+        </div>
+        
+        <div class="table-wrapper">
+            <table id="repoTable">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-sort="title">Title</th>
+                        <th class="sortable" data-sort="system">System</th>
+                        <th>DTRPG</th>
+                        <th>Itch.io</th>
+                        <th>USA<br>Creature Curation</th>
+                        <th>EU<br>All The Problems</th>
+                        <th>EU<br>Pit Trap Shop</th>
+                        <th>UK<br>Beyond Cataclysm</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="count" id="itemCount"></div>
+        
+        <footer>
+            <p>Created by Christian Eichhorn | 
+            <a href="mailto:christian.eichhorn.dmg@gmail.com">Email</a> | 
+            Discord: christianeichhorn</p>
+        </footer>
+    </div>
+    
+    <script>
+        const data = [
+        {
+                "title": "Apocrypha",
+                "system": "MB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/390265?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/apocrypha",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/apocrypha",
+                                "label": "Apocrypha"
+                        }
+                ]
+        },
+        {
+                "title": "Bergen Chrypt",
+                "system": "MB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/414853?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/bergen-chrypt",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "All The Problems (EU)",
+                                "url": "https://alltheproblemsinthisworld.com/shop/p/christian-eichhorn-bergen-chrypt",
+                                "label": "Bergen Chrypt"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/bergen-chrypt",
+                                "label": "Bergen Chrypt"
+                        },
+                        {
+                                "shop": "Beyond Cataclysm (UK)",
+                                "url": "https://beyondcataclysm.co.uk/product/unclean-mork-borg/",
+                                "label": "Unclean"
+                        }
+                ]
+        },
+        {
+                "title": "Beyond Cy",
+                "system": "CB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/432266?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/beyondcy",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "Creature Curation (USA)",
+                                "url": "https://creaturecuration.com/product/beyond-cy-cy_borg-compatible/",
+                                "label": "Beyond Cy"
+                        },
+                        {
+                                "shop": "All The Problems (EU)",
+                                "url": "https://alltheproblemsinthisworld.com/shop/p/christian-eichhorn-beyond-cy",
+                                "label": "Beyond Cy"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/beyond-cy",
+                                "label": "Beyond Cy [Defaced]"
+                        },
+                        {
+                                "shop": "Beyond Cataclysm (UK)",
+                                "url": "https://beyondcataclysm.co.uk/product/beyond_cy/",
+                                "label": "Beyond Cy"
+                        }
+                ]
+        },
+        {
+                "title": "CLVSTER",
+                "system": "DS, CB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/552459/clvster-a-death-in-space-adventure?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/clvster",
+                                "label": "\u25a0"
+                        }
+                ]
+        },
+        {
+                "title": "CVLT of the Hadron Lamb",
+                "system": "CB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/401372?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/the-cvlt-of-the-hadron-lamb",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "Creature Curation (USA)",
+                                "url": "https://creaturecuration.com/product/cvlt-of-the-hadron-l-a-m-b-cy_borg-compatible/",
+                                "label": "Hadron Lamb"
+                        },
+                        {
+                                "shop": "All The Problems (EU)",
+                                "url": "https://alltheproblemsinthisworld.com/shop/p/christian-eichhorn-the-cvlt-of-the-hadron-lamb",
+                                "label": "Hadron Lamb"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/cylt-of-the-hadron-lamb",
+                                "label": "Hadron Lamb"
+                        },
+                        {
+                                "shop": "Beyond Cataclysm (UK)",
+                                "url": "https://beyondcataclysm.co.uk/product/bankruptcy-cy_borg/",
+                                "label": "Bankrupt:CY"
+                        }
+                ]
+        },
+        {
+                "title": "Darknet Filth",
+                "system": "CB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/407199?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/darknet-filth",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "Creature Curation (USA)",
+                                "url": "https://creaturecuration.com/product/darknet-filth-cy_borg-compatible/",
+                                "label": "Darknet Filth"
+                        },
+                        {
+                                "shop": "All The Problems (EU)",
+                                "url": "https://alltheproblemsinthisworld.com/shop/p/christian-eichhorn-darknet-filth",
+                                "label": "Darknet Filth"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/darknet-filth",
+                                "label": "Darknet Filth"
+                        },
+                        {
+                                "shop": "Beyond Cataclysm (UK)",
+                                "url": "https://beyondcataclysm.co.uk/product/bankruptcy-cy_borg/",
+                                "label": "Bankrupt:CY"
+                        }
+                ]
+        },
+        {
+                "title": "Death and Taxes",
+                "system": "MB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/480935?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/death-and-taxes",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "All The Problems (EU)",
+                                "url": "https://alltheproblemsinthisworld.com/shop/p/christian-eichhorn-death-and-taxes",
+                                "label": "Death and Taxes"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/death-and-taxes",
+                                "label": "Death and Taxes"
+                        },
+                        {
+                                "shop": "Beyond Cataclysm (UK)",
+                                "url": "https://beyondcataclysm.co.uk/product/death-taxes/",
+                                "label": "Death & Taxes"
+                        }
+                ]
+        },
+        {
+                "title": "Derelict",
+                "system": "DS",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/459156?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/derelict-death-in-space-adventure",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "Creature Curation (USA)",
+                                "url": "https://creaturecuration.com/product/derelict-death-in-space-compatible/",
+                                "label": "Derelict"
+                        },
+                        {
+                                "shop": "All The Problems (EU)",
+                                "url": "https://alltheproblemsinthisworld.com/shop/p/christian-eichhorn-derelict",
+                                "label": "Derelict"
+                        },
+                        {
+                                "shop": "Beyond Cataclysm (UK)",
+                                "url": "https://beyondcataclysm.co.uk/product/derelict-death-in-space/",
+                                "label": "Derelict"
+                        }
+                ]
+        },
+        {
+                "title": "Down Bad",
+                "system": "CB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/467479?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/down-bad",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "Creature Curation (USA)",
+                                "url": "https://creaturecuration.com/product/down-bad-cy_borg-compatible/",
+                                "label": "Down Bad"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/down-bad",
+                                "label": "Down Bad"
+                        },
+                        {
+                                "shop": "Beyond Cataclysm (UK)",
+                                "url": "https://beyondcataclysm.co.uk/product/down-bad/",
+                                "label": "Down Bad"
+                        }
+                ]
+        },
+        {
+                "title": "Dungeons!",
+                "system": "MB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/396483?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/dungeons",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "All The Problems (EU)",
+                                "url": "https://alltheproblemsinthisworld.com/shop/p/christian-eichhorn-dungeons",
+                                "label": "Dungeons!"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/dungeons",
+                                "label": "Dungeons!"
+                        },
+                        {
+                                "shop": "Beyond Cataclysm (UK)",
+                                "url": "https://beyondcataclysm.co.uk/product/dungeons/",
+                                "label": "Dungeons!"
+                        }
+                ]
+        },
+        {
+                "title": "Galgenbeck: Sacrifice",
+                "system": "MB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/376385?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/galgenbeck-sacrifice",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/galgenbeck-sacrifice",
+                                "label": "Galgenbeck: Sacrifice"
+                        }
+                ]
+        },
+        {
+                "title": "gutter_PVNKS",
+                "system": "CB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/423722",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/gutter-pvnks",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "All The Problems (EU)",
+                                "url": "https://alltheproblemsinthisworld.com/shop/p/christian-eichhorn-gutter-pvnks",
+                                "label": "gutter_PVNKS"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/gutter_pvnks",
+                                "label": "gutter_PVNKS"
+                        },
+                        {
+                                "shop": "Beyond Cataclysm (UK)",
+                                "url": "https://beyondcataclysm.co.uk/product/bankruptcy-cy_borg/",
+                                "label": "Bankrupt:CY"
+                        }
+                ]
+        },
+        {
+                "title": "Hallowed",
+                "system": "MB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/381778?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/hallowed",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/hallowed",
+                                "label": "Hallowed"
+                        }
+                ]
+        },
+        {
+                "title": "Leviathan",
+                "system": "MB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/365706?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/leviathan",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/leviathan",
+                                "label": "Leviathan"
+                        },
+                        {
+                                "shop": "Beyond Cataclysm (UK)",
+                                "url": "https://beyondcataclysm.co.uk/product/leviathan/",
+                                "label": "Leviathan"
+                        }
+                ]
+        },
+        {
+                "title": "Meat & Greed",
+                "system": "CB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/531219?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/meat-and-greed",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "Creature Curation (USA)",
+                                "url": "https://creaturecuration.com/product/meat-greed-cy_borg-compatible/",
+                                "label": "Meat & Greed"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/meat-greed",
+                                "label": "Meat & Greed"
+                        },
+                        {
+                                "shop": "Beyond Cataclysm (UK)",
+                                "url": "https://beyondcataclysm.co.uk/product/meat_greed/",
+                                "label": "Meat & Greed"
+                        }
+                ]
+        },
+        {
+                "title": "Monochrome",
+                "system": "MB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/512833?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/monochrome",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "All The Problems (EU)",
+                                "url": "https://alltheproblemsinthisworld.com/shop/p/christian-eichhorn-monochrome",
+                                "label": "Monochrome"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/monochrome",
+                                "label": "Monochrome"
+                        },
+                        {
+                                "shop": "Beyond Cataclysm (UK)",
+                                "url": "https://beyondcataclysm.co.uk/product/melancholy-mork-borg-2/",
+                                "label": "Melancholy"
+                        }
+                ]
+        },
+        {
+                "title": "Monsters!",
+                "system": "MB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/442880?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/monsters",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "Creature Curation (USA)",
+                                "url": "https://creaturecuration.com/product/a-collection-of-monsters-mork-borg-compatible/",
+                                "label": "Monsters!"
+                        },
+                        {
+                                "shop": "All The Problems (EU)",
+                                "url": "https://alltheproblemsinthisworld.com/shop/p/eichhorn-traier-monsters",
+                                "label": "Monsters!"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/monsters",
+                                "label": "Monsters!"
+                        },
+                        {
+                                "shop": "Beyond Cataclysm (UK)",
+                                "url": "https://beyondcataclysm.co.uk/product/unclean-mork-borg/",
+                                "label": "Unclean"
+                        }
+                ]
+        },
+        {
+                "title": "Pamphlet Pack #1",
+                "system": "MB, CB, DS",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://legacy.drivethrurpg.com/product/553324/Pamphlet-Pack-1-BUNDLE?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "All The Problems (EU)",
+                                "url": "https://alltheproblemsinthisworld.com/shop/p/christian-eichhorn-pamphlet-pack-1",
+                                "label": "Pamphlet Pack #1"
+                        },
+                        {
+                                "shop": "Beyond Cataclysm (UK)",
+                                "url": "https://beyondcataclysm.co.uk/product/christian-eichhorn-pamphlet-pack-1/",
+                                "label": "Pamphlet Pack #1"
+                        }
+                ]
+        },
+        {
+                "title": "Pilcrow",
+                "system": "\u00b6",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/512835?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/pilcrow",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "All The Problems (EU)",
+                                "url": "https://alltheproblemsinthisworld.com/shop/p/christian-eichhorn-pilcrow",
+                                "label": "Pilcrow"
+                        },
+                        {
+                                "shop": "Beyond Cataclysm (UK)",
+                                "url": "https://beyondcataclysm.co.uk/product/melancholy-mork-borg-2/",
+                                "label": "Melancholy"
+                        }
+                ]
+        },
+        {
+                "title": "Purgatory",
+                "system": "MB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/371119?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/purgatory",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/purgatory",
+                                "label": "Purgatory"
+                        }
+                ]
+        },
+        {
+                "title": "Refuse",
+                "system": "MB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/490200?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/refuse",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/refuse",
+                                "label": "Refuse"
+                        }
+                ]
+        },
+        {
+                "title": "Sinners",
+                "system": "MB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/526680?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/sinners",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/sinners",
+                                "label": "Sinners"
+                        },
+                        {
+                                "shop": "Beyond Cataclysm (UK)",
+                                "url": "https://beyondcataclysm.co.uk/product/unclean-mork-borg/",
+                                "label": "Unclean"
+                        }
+                ]
+        },
+        {
+                "title": "Tribute",
+                "system": "MB, CB, DS",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/504337?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/tribute",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "All The Problems (EU)",
+                                "url": "https://alltheproblemsinthisworld.com/shop/p/christian-eichhorn-tribute",
+                                "label": "Tribute"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/tribute",
+                                "label": "Tribute"
+                        },
+                        {
+                                "shop": "Beyond Cataclysm (UK)",
+                                "url": "https://beyondcataclysm.co.uk/product/tribute/",
+                                "label": "Tribute"
+                        }
+                ]
+        },
+        {
+                "title": "Vaults of Torment",
+                "system": "MB",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/354906?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/the-vaults-of-torment",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "All The Problems (EU)",
+                                "url": "https://alltheproblemsinthisworld.com/shop/p/christian-eichhorn-vaults-of-torment",
+                                "label": "Vaults of Torment"
+                        },
+                        {
+                                "shop": "Pit Trap Shop (EU)",
+                                "url": "https://pittrapshop.com/products/vaults-of-torment",
+                                "label": "Vaults of Torment"
+                        },
+                        {
+                                "shop": "Beyond Cataclysm (UK)",
+                                "url": "https://beyondcataclysm.co.uk/product/vaults-of-torment/",
+                                "label": "Vaults of Torment"
+                        }
+                ]
+        },
+        {
+                "title": "Xenophilia",
+                "system": "DS",
+                "links": [
+                        {
+                                "shop": "DTRPG",
+                                "url": "https://www.drivethrurpg.com/en/product/496468?affiliate_id=1399969",
+                                "label": "\u25ba"
+                        },
+                        {
+                                "shop": "Itch.io",
+                                "url": "https://christianeichhorn.itch.io/xenophilia",
+                                "label": "\u25a0"
+                        },
+                        {
+                                "shop": "Creature Curation (USA)",
+                                "url": "https://creaturecuration.com/product/xenophilia-death-in-space-compatible/",
+                                "label": "Xenophilia"
+                        },
+                        {
+                                "shop": "Beyond Cataclysm (UK)",
+                                "url": "https://beyondcataclysm.co.uk/product/xenophilia/",
+                                "label": "Xenophilia"
+                        }
+                ]
+        }
+];
+        
+        let currentFilter = 'all';
+        let currentSort = { column: null, direction: 'asc' };
+        
+        // Shop column mapping
+        const shopColumns = [
+            'DTRPG',
+            'Itch.io',
+            'Creature Curation (USA)',
+            'All The Problems (EU)',
+            'Pit Trap Shop (EU)',
+            'Beyond Cataclysm (UK)'
+        ];
+        
+        function getLinkForShop(item, shopName) {
+            return item.links.find(link => link.shop === shopName);
+        }
+        
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            let visibleCount = 0;
+            let sortedData = [...data];
+            
+            // Apply sorting
+            if (currentSort.column) {
+                sortedData.sort((a, b) => {
+                    let aVal = a[currentSort.column] || '';
+                    let bVal = b[currentSort.column] || '';
+                    
+                    if (currentSort.direction === 'asc') {
+                        return aVal.localeCompare(bVal);
+                    } else {
+                        return bVal.localeCompare(aVal);
+                    }
+                });
+            }
+            
+            sortedData.forEach(item => {
+                const row = document.createElement('tr');
+                
+                // Check if item should be visible based on filter
+                let shouldShow = true;
+                if (currentFilter !== 'all') {
+                    if (currentFilter === 'multi') {
+                        shouldShow = item.system.includes(',');
+                    } else {
+                        shouldShow = item.system.includes(currentFilter);
+                    }
+                }
+                
+                if (!shouldShow) {
+                    row.classList.add('hidden');
+                } else {
+                    visibleCount++;
+                }
+                
+                // Title cell
+                const titleCell = document.createElement('td');
+                titleCell.className = 'title';
+                titleCell.textContent = item.title;
+                row.appendChild(titleCell);
+                
+                // System cell
+                const systemCell = document.createElement('td');
+                systemCell.className = 'system';
+                systemCell.textContent = item.system || '—';
+                row.appendChild(systemCell);
+                
+                // Shop columns
+                shopColumns.forEach(shopName => {
+                    const cell = document.createElement('td');
+                    const link = getLinkForShop(item, shopName);
+                    
+                    if (link) {
+                        const a = document.createElement('a');
+                        a.href = link.url;
+                        a.className = 'shop-link';
+                        a.textContent = link.label === '►' || link.label === '■' ? '●' : '●';
+                        a.title = shopName;
+                        a.target = '_blank';
+                        cell.appendChild(a);
+                    } else {
+                        cell.innerHTML = '<span class="empty-cell">—</span>';
+                    }
+                    
+                    row.appendChild(cell);
+                });
+                
+                tbody.appendChild(row);
+            });
+            
+            // Update count
+            document.getElementById('itemCount').textContent = 
+                `Showing ${visibleCount} of ${data.length} items`;
+        }
+        
+        // Filter button handlers
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.system;
+                renderTable();
+            });
+        });
+        
+        // Sort handlers
+        document.querySelectorAll('th.sortable').forEach(th => {
+            th.addEventListener('click', () => {
+                const column = th.dataset.sort;
+                
+                // Toggle direction if clicking same column
+                if (currentSort.column === column) {
+                    currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                } else {
+                    currentSort.column = column;
+                    currentSort.direction = 'asc';
+                }
+                
+                // Update header classes
+                document.querySelectorAll('th.sortable').forEach(h => {
+                    h.classList.remove('sorted-asc', 'sorted-desc');
+                });
+                
+                if (currentSort.direction === 'asc') {
+                    th.classList.add('sorted-asc');
+                } else {
+                    th.classList.add('sorted-desc');
+                }
+                
+                renderTable();
+            });
+        });
+        
+        // Initial render
+        renderTable();
+    </script>
+</body>
+</html>
