@@ -1097,11 +1097,6 @@
                 document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 currentFilter = btn.dataset.system;
-
-				document.getElementById('repoTable').scrollIntoView({ 
-      			behavior: 'smooth', 
-        		block: 'start'
-				
                 renderTable();
             });
         });
