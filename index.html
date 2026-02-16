@@ -1207,7 +1207,8 @@
                 renderTable();
             });
         });
-
+		
+// Noise Function
 function generateNoise() {
     const canvas = document.createElement('canvas');
     canvas.id = 'noiseCanvas';
@@ -1224,12 +1225,11 @@ function generateNoise() {
     window.addEventListener('resize', resize);
     resize();
 
-	// Noise Function
     function render() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
         // Number of "noise chunks" per frame - increase for more "static"
-        const density = 500; 
+        const density = 100; 
         
         for (let i = 0; i < density; i++) {
             const x = Math.random() * canvas.width;
