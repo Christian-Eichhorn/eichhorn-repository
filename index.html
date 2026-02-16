@@ -1098,10 +1098,10 @@
                 btn.classList.add('active');
                 currentFilter = btn.dataset.system;
 
-document.getElementById('repoTable').scrollIntoView({ 
-    behavior: 'smooth', 
-    block: 'start' 
-});
+				document.getElementById('repoTable').scrollIntoView({ 
+    			behavior: 'smooth', 
+    			block: 'start' 
+				});
 				
                 renderTable();
             });
@@ -1130,7 +1130,12 @@ document.getElementById('repoTable').scrollIntoView({
                 } else {
                     th.classList.add('sorted-desc');
                 }
-                
+
+				document.getElementById('repoTable').scrollIntoView({ 
+    			behavior: 'smooth', 
+    			block: 'start' 
+				});
+				
                 renderTable();
             });
         });
