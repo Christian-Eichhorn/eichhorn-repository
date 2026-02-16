@@ -281,7 +281,7 @@
     	height: 100%;
     	pointer-events: none; /* Allows you to click "through" the noise to buttons */
     	z-index: 9999;       /* Keeps it on top of everything */
-    	opacity: 0.95;       /* Keep this low (0.02 - 0.08) for "subtle" noise */
+    	opacity: 1.00;       /* Keep this low (0.02 - 0.08) for "subtle" noise */
 		}
 		
     </style>
@@ -1229,7 +1229,7 @@ function generateNoise() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
         // Number of "noise chunks" per frame - increase for more "static"
-        const density = 5000; 
+        const density = 500; 
         
         for (let i = 0; i < density; i++) {
             const x = Math.random() * canvas.width;
