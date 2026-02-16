@@ -1229,7 +1229,7 @@ function generateNoise() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
         // Number of "noise chunks" per frame - increase for more "static"
-        const density = 100; 
+        const density = 10; 
         
         for (let i = 0; i < density; i++) {
             const x = Math.random() * canvas.width;
