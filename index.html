@@ -281,7 +281,7 @@
     	height: 100%;
     	pointer-events: none; /* Allows you to click "through" the noise to buttons */
     	z-index: 9999;       /* Keeps it on top of everything */
-    	opacity: 0.05;       /* Keep this low (0.02 - 0.08) for "subtle" noise */
+    	opacity: 0.95;       /* Keep this low (0.02 - 0.08) for "subtle" noise */
 		}
 		
     </style>
@@ -1224,6 +1224,7 @@ function generateNoise() {
     window.addEventListener('resize', resize);
     resize();
 
+	// Noise Function
     function render() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
