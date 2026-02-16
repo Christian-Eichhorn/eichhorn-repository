@@ -1098,6 +1098,11 @@
                 btn.classList.add('active');
                 currentFilter = btn.dataset.system;
                 renderTable();
+
+				document.getElementById('repoTable').scrollIntoView({ 
+       			behavior: 'smooth', 
+      			block: 'start'
+				
             });
         });
         
