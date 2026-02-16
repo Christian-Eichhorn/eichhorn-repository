@@ -1048,7 +1048,8 @@
                         // Use the label from spreadsheet (which might be variant name like "Unclean")
                         // or the title if label was just a symbol
                         const productName = (link.label === '►' || link.label === '■') ? item.title : link.label;
-                        a.textContent = `${productName} (${shop.short})`;
+                        a.textContent = `${productName}`;
+						// a.textContent = `${productName} (${shop.short})`;
                         a.target = '_blank';
                         cell.appendChild(a);
                     } else {
