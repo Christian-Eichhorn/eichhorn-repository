@@ -1229,7 +1229,10 @@ function generateNoise() {
     
     const ctx = canvas.getContext('2d');
     
-    // Resize function
+    // Density settings
+    let baseDensity = 10; // Your normal "subtle" level
+    let currentDensity = baseDensity;
+    
     function resize() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -1238,30 +1241,38 @@ function generateNoise() {
     window.addEventListener('resize', resize);
     resize();
 
+    // Spike density on Mouse Click
+    window.addEventListener('mousedown', () => {
+        currentDensity = 800; // Big burst of static
+    });
+
+    // Spike density on Mouse Wheel (Scroll)
+    window.addEventListener('wheel', () => {
+        // Increase density but don't exceed a "white out" level
+        currentDensity = Math.min(currentDensity + 50, 400); 
+    }, { passive: true });
+
     function render() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        // Number of "noise chunks" per frame - increase for more "static"
-        const density = 10; 
-        
-        for (let i = 0; i < density; i++) {
+        for (let i = 0; i < currentDensity; i++) {
             const x = Math.random() * canvas.width;
             const y = Math.random() * canvas.height;
             
-            // Randomly choose 1x1 or 2x2
             const size = Math.random() > 0.5 ? 1 : 2;
-            
-            // Randomly choose black or white
             ctx.fillStyle = Math.random() > 0.5 ? '#000' : '#fff';
             
             ctx.fillRect(x, y, size, size);
         }
         
-        // Control the "flicker" speed (requestAnimationFrame is ~60fps)
-        // To make it more "stuttery" and disturbing, we use a timeout
+        // Slowly "decay" the static back to base level
+        if (currentDensity > baseDensity) {
+            currentDensity = Math.max(baseDensity, currentDensity * 0.85);
+        }
+        
         setTimeout(() => {
             requestAnimationFrame(render);
-        }, 80); // 80ms creates a slightly lower-framerate, jittery static
+        }, 80); 
     }
 
     render();
