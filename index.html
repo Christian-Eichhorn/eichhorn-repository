@@ -19,8 +19,7 @@
 		.glitch-active {
     		font-style: italic;
     		transform: skewX(-15deg); /* Enhances the italic look */
-    		color: #fff;              /* Optional: highlights the symbol in white when it glitches */
-			}
+    		}
 
 		/* Change Letter to UniFraktur Font */
 		.gothic-letter {
@@ -303,7 +302,7 @@
     <div class="container">
         <header>
 			<h1><span class="pulse-symbol">▼</span></h1>
-			<h1> An <span class="gothic-letter">Un</span>clean <span class="italic-flicker">Repo</span>sitor<span class="logo-spinner">y</span></h1>
+			<h1> An <span class="gothic-letter">Un</span>clean <span class="italic-flicker">Repositor</span><span class="logo-spinner">y</span></h1>
 			
         </header>
         
@@ -1274,11 +1273,11 @@ function startItalicFlicker() {
     targets.forEach(target => {
         // Create an individual loop for each symbol found
         const flickerLoop = () => {
-            // 1. Randomly decide how long to stay "glitched" (50ms to 300ms)
-            const glitchDuration = Math.random() * 250 + 50;
+            // 1. Randomly decide how long to stay "glitched" 
+            const glitchDuration = Math.random() * 1250 + 50;
 
             // 2. Randomly decide when the next glitch happens (1s to 5s)
-            const nextGlitchIn = Math.random() * 4000 + 1000;
+            const nextGlitchIn = Math.random() * 4000 + 5000;
 
             // Apply the effect
             target.classList.add('glitch-active');
