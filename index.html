@@ -10,42 +10,7 @@
     <title>The Unclean Repository</title>
 	<link rel="icon" type="image/x-icon" href="https://c-p.rmcdn1.net/55bba736ee99699f20401f3d/5ddc255321061907727f6b56/upload-48702bac-ed85-4418-9489-db4fab126049.png">
     <style>
-		/* --- BEGIN NEW INFO BOXES --- */
-		/* --- NEW OVERLAY STYLES --- */
-#info-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 10000; /* Stays above the noiseCanvas (9999) */
-    visibility: hidden; /* Hidden until we hover */
-    pointer-events: none; /* Mouse can pass through it so it doesn't flicker */
-    transform: translate(20px, 20px); /* Offsets it slightly from the cursor */
-}
 
-#overlay-content-box {
-    background: #fff;
-    color: #000;
-    padding: 20px 30px;
-    min-width: 200px;
-    position: relative; /* Needed so glitch pieces can stick to the edges */
-    box-shadow: 10px 10px 0px #000; /* Adds that sharp Mörk Borg shadow */
-}
-
-#overlay-title {
-    font-family: 'Inter', sans-serif;
-    font-size: 2rem;
-    font-weight: bold;
-    display: block;
-}
-
-/* These are the "glitch" pieces that will form the messy border */
-.glitch-border-rect {
-    position: absolute;
-    background: #fff;
-    z-index: -1; /* Sits just behind the main white box */
-}
-/* --- END NEW INFO BOXES --- */
-		
 		/* Makes Letters Glitch Italic */
 		.italic-flicker {
     		display: inline-block;
@@ -1342,80 +1307,7 @@ function startItalicFlicker() {
         flickerLoop();
     });
 }
-		
-/* ********************* */	
-/* BELONGS TO INFO BLOCK */
-/* ********************* */		
-function generateGlitchBlocks() {
-    const container = document.getElementById('overlay-content-box');
-    
-    // 1. Clear out blocks from the previous hover
-    const oldBlocks = container.querySelectorAll('.glitch-border-rect');
-    oldBlocks.forEach(block => block.remove());
 
-    // 2. Spawn between 12 and 22 random white rectangles
-    const blockCount = Math.floor(Math.random() * 10) + 12;
-
-    for (let i = 0; i < blockCount; i++) {
-        const block = document.createElement('div');
-        block.className = 'glitch-border-rect';
-
-        // 3. Randomize size (between 10px and 50px)
-        const size = Math.random() * 40 + 10;
-        block.style.width = `${size}px`;
-        block.style.height = `${size}px`;
-
-        // 4. Randomly attach to one of the four edges
-        const edge = Math.floor(Math.random() * 4); 
-        if (edge === 0) { // Top
-            block.style.top = `-${size / 2}px`;
-            block.style.left = `${Math.random() * 100}%`;
-        } else if (edge === 1) { // Right
-            block.style.right = `-${size / 2}px`;
-            block.style.top = `${Math.random() * 100}%`;
-        } else if (edge === 2) { // Bottom
-            block.style.bottom = `-${size / 2}px`;
-            block.style.left = `${Math.random() * 100}%`;
-        } else { // Left
-            block.style.left = `-${size / 2}px`;
-            block.style.top = `${Math.random() * 100}%`;
-        }
-
-        container.appendChild(block);
-    }
-}
-
-const overlay = document.getElementById('info-overlay');
-const overlayTitle = document.getElementById('overlay-title');
-
-// 1. Show and generate glitch on hover
-document.addEventListener('mouseover', (e) => {
-    if (e.target.classList.contains('title')) {
-        overlay.style.visibility = 'visible';
-        overlayTitle.textContent = e.target.textContent;
-        generateGlitchBlocks();
-    }
-});
-
-// 2. Follow the mouse cursor
-document.addEventListener('mousemove', (e) => {
-    if (overlay.style.visibility === 'visible') {
-        overlay.style.left = `${e.clientX}px`;
-        overlay.style.top = `${e.clientY}px`;
-    }
-});
-
-// 3. Hide when leaving the title
-document.addEventListener('mouseout', (e) => {
-    if (e.target.classList.contains('title')) {
-        overlay.style.visibility = 'hidden';
-    }
-});
-		
-
-		/* ********************* */	
-		/* RENDER RENDER RENDER  */
-		/* ********************* */	
 		
         // Initial render
         renderTable();
@@ -1427,12 +1319,6 @@ document.addEventListener('mouseout', (e) => {
 		
     </script>
 
-/* BELONGS TO INFO BLOCK */
-<div id="info-overlay">
-    <div id="overlay-content-box">
-        <span id="overlay-title">Title Placeholder</span>
-        </div>
-</div>
 	
 </body>
 </html>
