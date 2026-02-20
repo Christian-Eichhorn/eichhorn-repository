@@ -11,57 +11,7 @@
 	<link rel="icon" type="image/x-icon" href="https://c-p.rmcdn1.net/55bba736ee99699f20401f3d/5ddc255321061907727f6b56/upload-48702bac-ed85-4418-9489-db4fab126049.png">
     <style>
 
-		/* Makes Letters Glitch Italic */
-		.italic-flicker {
-    		display: inline-block;
-    		transition: all 0.05s ease; /* Very fast transition for a "jittery" feel */
-			}
-		.glitch-active {
-    		font-style: italic;
-    		}
-
-		/* Change Letter to UniFraktur Font */
-		.gothic-letter {
-   			font-family: 'UnifrakturCook', cursive;
-    		/* You can also adjust size or color to make it stand out more */
-    		font-size: 1.2em; 
-    		line-height: 0;
-			}
-
-		/* Makes Letters Spin */
-		@keyframes logo-spin {
-    		from { transform: rotate(0deg); }
-    		to { transform: rotate(360deg); }
-			}
-
-			.logo-spinner {
- 			display: inline-block;  /* Required for rotation to work */
-    		animation: logo-spin 40s linear infinite;
-    		transform-origin: center;
-    
-    		/* This helps center the symbol if it looks "wobbly" */
-    		line-height: 1;
-    		vertical-align: middle;
-			}
-
-		/* Makes Letters Pulsate */	
-		@keyframes grow-shrink {
- 		   	0% {
-     		transform: scale(1); /* Original size */
-   		 	}
-    		50% {
-       		transform: scale(2.0); /* Changes size, value in percent */
-    		}
-    		100% {
-        	transform: scale(1); /* Back to original size */
-    		}
-			}
-
-			.pulse-symbol {
-    		display: inline-block;     /* Essential for scaling to work */
-    		animation: grow-shrink 6s ease-in-out infinite;
-    		transform-origin: center;  /* Ensures it shrinks toward the middle */
-			}
+		
 
 		
 		#itemCount {
@@ -80,12 +30,6 @@
 
 		h2 {
   			font-size: 0.75em;
-			color: #000;
-			font-weight: normal;
-			}
-
-		h3 {
-  			font-size: 30em;
 			color: #000;
 			font-weight: normal;
 			}
@@ -284,6 +228,59 @@
             font-size: 0.9rem;
         }
 
+/* Makes Letters Glitch Italic */
+		.italic-flicker {
+    		display: inline-block;
+    		transition: all 0.05s ease; /* Very fast transition for a "jittery" feel */
+			}
+		.glitch-active {
+    		font-style: italic;
+    		}
+
+		/* Change Letter to UniFraktur Font */
+		.gothic-letter {
+   			font-family: 'UnifrakturCook', cursive;
+    		/* You can also adjust size or color to make it stand out more */
+    		font-size: 1.2em; 
+    		line-height: 0;
+			}
+
+		/* Makes Letters Spin */
+		@keyframes logo-spin {
+    		from { transform: rotate(0deg); }
+    		to { transform: rotate(360deg); }
+			}
+
+			.logo-spinner {
+ 			display: inline-block;  /* Required for rotation to work */
+    		animation: logo-spin 40s linear infinite;
+    		transform-origin: center;
+    
+    		/* This helps center the symbol if it looks "wobbly" */
+    		line-height: 1;
+    		vertical-align: middle;
+			}
+
+		/* Makes Letters Pulsate */	
+		@keyframes grow-shrink {
+ 		   	0% {
+     		transform: scale(1); /* Original size */
+   		 	}
+    		50% {
+       		transform: scale(2.0); /* Changes size, value in percent */
+    		}
+    		100% {
+        	transform: scale(1); /* Back to original size */
+    		}
+			}
+
+			.pulse-symbol {
+    		display: inline-block;     /* Essential for scaling to work */
+    		animation: grow-shrink 6s ease-in-out infinite;
+    		transform-origin: center;  /* Ensures it shrinks toward the middle */
+			}
+
+		/* DISTRESS EFFECT */	
 		#noiseCanvas {
   	  	position: fixed;
     	top: 0;
