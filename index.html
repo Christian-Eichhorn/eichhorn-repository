@@ -1312,13 +1312,13 @@ function generateNoise() {
 
     // Spike density on Mouse Click
     window.addEventListener('mousedown', () => {
-        currentDensity = 800; // Big burst of static
+        currentDensity = 300; // Big burst of static
     });
 
     // Spike density on Mouse Wheel (Scroll)
     window.addEventListener('wheel', () => {
         // Increase density but don't exceed a "white out" level
-        currentDensity = Math.min(currentDensity + 50, 400); 
+        currentDensity = Math.min(currentDensity + 50, 300); 
     }, { passive: true });
 
     function render() {
